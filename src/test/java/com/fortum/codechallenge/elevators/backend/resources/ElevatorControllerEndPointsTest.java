@@ -1,6 +1,7 @@
 package com.fortum.codechallenge.elevators.backend.resources;
 
-import com.fortum.codechallenge.elevators.backend.api.ElevatorController;
+import com.fortum.codechallenge.elevators.backend.controller.ElevatorControllerEndPoints;
+import com.fortum.codechallenge.elevators.backend.domain.ElevatorController;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

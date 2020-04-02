@@ -1,7 +1,7 @@
-package com.fortum.codechallenge.elevators.backend.impl;
+package com.fortum.codechallenge.elevators.backend.domain.impl;
 
-import com.fortum.codechallenge.elevators.backend.api.Elevator;
-import com.fortum.codechallenge.elevators.backend.api.ElevatorController;
+import com.fortum.codechallenge.elevators.backend.domain.Elevator;
+import com.fortum.codechallenge.elevators.backend.domain.ElevatorController;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

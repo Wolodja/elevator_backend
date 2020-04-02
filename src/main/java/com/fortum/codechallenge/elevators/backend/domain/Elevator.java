@@ -1,4 +1,4 @@
-package com.fortum.codechallenge.elevators.backend.api;
+package com.fortum.codechallenge.elevators.backend.domain;
 
 /**
  * Interface for an elevator object.

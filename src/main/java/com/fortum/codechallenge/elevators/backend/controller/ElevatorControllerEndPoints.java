@@ -1,6 +1,6 @@
-package com.fortum.codechallenge.elevators.backend.resources;
+package com.fortum.codechallenge.elevators.backend.controller;
 
-import com.fortum.codechallenge.elevators.backend.api.ElevatorController;
+import com.fortum.codechallenge.elevators.backend.domain.ElevatorController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
