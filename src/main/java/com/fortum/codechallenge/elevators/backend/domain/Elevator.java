@@ -6,18 +6,11 @@ package com.fortum.codechallenge.elevators.backend.domain;
 public interface Elevator {
 
     /**
-     * Enumeration for describing elevator's direction.
-     */
-    enum Direction {
-        UP, DOWN, NONE
-    }
-
-    /**
      * Tells which direction is the elevator going in.
      *
      * @return Direction Enumeration value describing the direction.
      */
-    Direction getDirection();
+    DirectionEnum getDirection();
 
     /**
      * If the elevator is moving. This is the target floor.
