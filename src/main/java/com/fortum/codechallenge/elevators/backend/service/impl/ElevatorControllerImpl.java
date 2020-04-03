@@ -1,11 +1,13 @@
-package com.fortum.codechallenge.elevators.backend.domain.impl;
+package com.fortum.codechallenge.elevators.backend.service.impl;
 
-import com.fortum.codechallenge.elevators.backend.domain.Elevator;
-import com.fortum.codechallenge.elevators.backend.domain.ElevatorController;
+import com.fortum.codechallenge.elevators.backend.service.Elevator;
+import com.fortum.codechallenge.elevators.backend.service.ElevatorController;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class ElevatorControllerImpl implements ElevatorController {
     @Override

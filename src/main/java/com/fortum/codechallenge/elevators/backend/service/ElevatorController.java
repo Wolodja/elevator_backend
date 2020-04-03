@@ -1,4 +1,4 @@
-package com.fortum.codechallenge.elevators.backend.domain;
+package com.fortum.codechallenge.elevators.backend.service;
 
 import java.util.List;
 
