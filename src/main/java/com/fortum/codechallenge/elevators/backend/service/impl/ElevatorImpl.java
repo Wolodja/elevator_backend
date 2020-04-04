@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 @Slf4j
 @Getter
 @Service
@@ -17,6 +21,8 @@ public class ElevatorImpl implements Elevator {
     private int totalNumberOfFloors;
     private int currentFloor;
     private DirectionEnum direction;
+    private List<Integer> targetFloors=Collections.synchronizedList(new ArrayList<>());
+    private List<Integer> servedFloors= Collections.synchronizedList(new ArrayList<>());
 
     public ElevatorImpl(int id, int totalNumberOfFloors) {
         this.id = id;
@@ -32,12 +38,25 @@ public class ElevatorImpl implements Elevator {
 
     @Override
     public int getAddressedFloor() {
-        return 0;
+        int addressedFloor = -1;
+        if (isBusy()) {
+            switch (direction) {
+                case UP:
+                    addressedFloor = targetFloors.stream().mapToInt(Number::intValue).max().orElse(-1);
+                    break;
+                case DOWN:
+                    addressedFloor = targetFloors.stream().mapToInt(Number::intValue).min().orElse(-1);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return addressedFloor;
     }
 
     @Override
     public int getId() {
-        return 0;
+        return id;
     }
 
     @Override
@@ -47,7 +66,7 @@ public class ElevatorImpl implements Elevator {
 
     @Override
     public boolean isBusy() {
-        return false;
+        return !targetFloors.isEmpty();
     }
 
     @Override
