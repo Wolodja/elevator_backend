@@ -28,10 +28,8 @@ public interface Elevator {
 
     /**
      * Command to move the elevator to the given floor.
-     *
-     * @param toFloor int where to go.
      */
-    void moveElevator(int toFloor);
+    void moveElevator();
 
     /**
      * Check if the elevator is occupied at the moment.
