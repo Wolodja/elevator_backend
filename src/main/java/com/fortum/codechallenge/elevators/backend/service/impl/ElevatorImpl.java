@@ -26,6 +26,9 @@ public class ElevatorImpl implements Elevator, Runnable {
     @Value("${com.fortum.codechallenge.onFloorTravelTime}")
     private int oneFloorTravelTime;
 
+    @Value("${com.fortum.codechallenge.passengersGettingOfElevatorTime}")
+    private int passengersGettingOffTime;
+
     private int currentFloor;
 
     private int targetFloor;
@@ -42,6 +45,19 @@ public class ElevatorImpl implements Elevator, Runnable {
         this.currentFloor = 0;
         this.targetFloor = 0;
         direction = DirectionEnum.NONE;
+    }
+
+    @Override
+    public void run() {
+        runElevator();
+    }
+
+    private void runElevator(){
+        while(isBusy()){
+            targetFloor = getAddressedFloor();
+            moveElevator();
+            waitForPassengersToGetOff();
+        }
     }
 
     @Override
@@ -82,19 +98,24 @@ public class ElevatorImpl implements Elevator, Runnable {
             moveOneFloor();
             addOneFloorTravelTime();
         }
+        logElevatorFinishMove();
         targetFloors.removeIf(floor -> (currentFloor == floor));
     }
 
-
-    private void logElevatorMove() {
-        log.info("Elevator ID " + getId() + " currently in Floor " + currentFloor + " current Direction is  " + direction + "  moving to the floor " + targetFloor);
-    }
 
     private void addOneFloorTravelTime() {
         try {
             Thread.sleep(oneFloorTravelTime);
         } catch (InterruptedException e) {
-            log.error(e.toString());
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private void waitForPassengersToGetOff() {
+        try {
+            Thread.sleep(passengersGettingOffTime);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -129,8 +150,11 @@ public class ElevatorImpl implements Elevator, Runnable {
         return currentFloor;
     }
 
-    @Override
-    public void run() {
+    private void logElevatorMove() {
+        log.info("Elevator " + id + " is on " + currentFloor + " floor and is moving to " + targetFloor + " floor");
+    }
 
+    private void logElevatorFinishMove() {
+        log.info("Elevator  " + id + " reached " + targetFloor + " floor");
     }
 }
