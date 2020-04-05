@@ -43,6 +43,6 @@ public interface Elevator {
      *
      * @return int actual floor at the moment.
      */
-    int currentFloor();
+    int getCurrentFloor();
 
 }

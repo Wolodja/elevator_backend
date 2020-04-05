@@ -34,12 +34,9 @@ public class ElevatorImpl implements Elevator, Runnable {
 
     private int targetFloor;
 
-
     private DirectionEnum direction;
 
     private List<Integer> targetFloors = Collections.synchronizedList(new ArrayList<>());
-
-    private List<Integer> servedFloors = Collections.synchronizedList(new ArrayList<>());
 
     public ElevatorImpl(int id) {
         this.id = id;
@@ -50,20 +47,12 @@ public class ElevatorImpl implements Elevator, Runnable {
 
     @Override
     public void run() {
-        runElevator();
-    }
-
-    private void runElevator() {
         while (isBusy()) {
             targetFloor = getAddressedFloor();
             moveElevator();
             waitForPassengersToGetInOrGetOff();
         }
-    }
-
-    @Override
-    public DirectionEnum getDirection() {
-        return direction;
+        direction = DirectionEnum.NONE;
     }
 
     @Override
@@ -111,11 +100,6 @@ public class ElevatorImpl implements Elevator, Runnable {
                         .orElseThrow(() -> new RuntimeException("Target Floor List is empty!"));
                 return addressedFloor;
         }
-    }
-
-    @Override
-    public int getId() {
-        return id;
     }
 
     @Override
@@ -173,11 +157,6 @@ public class ElevatorImpl implements Elevator, Runnable {
     @Override
     public boolean isBusy() {
         return !targetFloors.isEmpty();
-    }
-
-    @Override
-    public int currentFloor() {
-        return currentFloor;
     }
 
     private void logElevatorMove() {
