@@ -45,4 +45,6 @@ public interface Elevator {
      */
     int getCurrentFloor();
 
+    void addFloorToTargetList(int floor);
+
 }

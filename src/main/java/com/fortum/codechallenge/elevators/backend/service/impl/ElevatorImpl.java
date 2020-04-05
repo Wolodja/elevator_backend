@@ -159,6 +159,11 @@ public class ElevatorImpl implements Elevator, Runnable {
         return !targetFloors.isEmpty();
     }
 
+    @Override
+    public void addFloorToTargetList(int floor) {
+        targetFloors.add(floor);
+    }
+
     private void logElevatorMove() {
         log.info("Elevator " + id + " is on " + currentFloor + " floor and is moving to " + targetFloor + " floor");
     }
