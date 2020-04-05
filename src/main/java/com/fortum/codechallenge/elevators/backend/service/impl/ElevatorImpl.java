@@ -52,7 +52,6 @@ public class ElevatorImpl implements Elevator, Runnable {
             moveElevator();
             waitForPassengersToGetInOrGetOff();
         }
-        direction = DirectionEnum.NONE;
     }
 
     @Override

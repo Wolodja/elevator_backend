@@ -8,8 +8,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @SpringBootApplication
 public class ElevatorApplication {
@@ -22,7 +22,7 @@ public class ElevatorApplication {
     }
 
     @Bean(destroyMethod = "shutdown")
-    public Executor taskExecutor() {
+    public ScheduledExecutorService taskExecutor() {
         return Executors.newScheduledThreadPool(numberOfElevators);
     }
 
