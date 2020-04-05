@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -52,11 +53,11 @@ public class ElevatorImpl implements Elevator, Runnable {
         runElevator();
     }
 
-    private void runElevator(){
-        while(isBusy()){
+    private void runElevator() {
+        while (isBusy()) {
             targetFloor = getAddressedFloor();
             moveElevator();
-            waitForPassengersToGetOff();
+            waitForPassengersToGetInOrGetOff();
         }
     }
 
@@ -67,20 +68,49 @@ public class ElevatorImpl implements Elevator, Runnable {
 
     @Override
     public int getAddressedFloor() {
-        int addressedFloor = -1;
-        if (isBusy()) {
-            switch (direction) {
-                case UP:
-                    addressedFloor = targetFloors.stream().mapToInt(Number::intValue).max().orElse(-1);
-                    break;
-                case DOWN:
-                    addressedFloor = targetFloors.stream().mapToInt(Number::intValue).min().orElse(-1);
-                    break;
-                default:
-                    break;
-            }
+        if (targetFloors.contains(currentFloor)) {
+            return currentFloor;
         }
-        return addressedFloor;
+        return calculateAddressFloor();
+    }
+
+    private int calculateAddressFloor() {
+        int addressedFloor;
+        switch (direction) {
+            case UP:
+                addressedFloor = targetFloors.stream()
+                        .filter(floor -> floor > currentFloor)
+                        .mapToInt(Number::intValue)
+                        .min()
+                        .orElse(-1);
+                if (addressedFloor == -1) {
+                    addressedFloor = targetFloors.stream()
+                            .filter(floor -> floor < currentFloor)
+                            .mapToInt(Number::intValue)
+                            .max()
+                            .orElse(-1);
+                }
+                return addressedFloor;
+            case DOWN:
+                addressedFloor = targetFloors.stream()
+                        .filter(floor -> floor < currentFloor)
+                        .mapToInt(Number::intValue)
+                        .max()
+                        .orElse(-1);
+                if (addressedFloor == -1) {
+                    addressedFloor = targetFloors.stream()
+                            .filter(floor -> floor > currentFloor)
+                            .mapToInt(Number::intValue)
+                            .min()
+                            .orElse(-1);
+                }
+                return addressedFloor;
+            default:
+                addressedFloor = targetFloors.stream()
+                        .min(Comparator.comparingInt(i -> Math.abs(i - currentFloor)))
+                        .orElseThrow(() -> new RuntimeException("Target Floor List is empty!"));
+                return addressedFloor;
+        }
     }
 
     @Override
@@ -111,7 +141,7 @@ public class ElevatorImpl implements Elevator, Runnable {
         }
     }
 
-    private void waitForPassengersToGetOff() {
+    private void waitForPassengersToGetInOrGetOff() {
         try {
             Thread.sleep(passengersGettingOffTime);
         } catch (InterruptedException e) {
