@@ -3,7 +3,7 @@ package com.fortum.codechallenge.elevators.backend.service;
 /**
  * Interface for an elevator object.
  */
-public interface Elevator {
+public interface Elevator extends Runnable{
 
     /**
      * Tells which direction is the elevator going in.

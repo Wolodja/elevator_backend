@@ -31,4 +31,8 @@ public interface ElevatorController {
      */
     void releaseElevator(Elevator elevator);
 
+    Elevator requestElevator(int toFloor, DirectionEnum requestedDirection);
+
+    Elevator requestInsideElevator(int toFloor, int elevatorId);
+
 }
