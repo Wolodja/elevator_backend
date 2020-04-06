@@ -22,7 +22,7 @@ public class ElevatorImpl implements Elevator, Runnable {
     private int id;
 
     @Value("${com.fortum.codechallenge.numberOfFloors}")
-    private int totalNumberOfFloors;
+    private int numberOfFloors;
 
     @Value("${com.fortum.codechallenge.onFloorTravelTime}")
     private int oneFloorTravelTime;
