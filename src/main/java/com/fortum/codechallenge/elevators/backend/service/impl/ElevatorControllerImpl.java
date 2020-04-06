@@ -32,13 +32,8 @@ public class ElevatorControllerImpl implements ElevatorController {
     }
 
     @Override
-    public Elevator requestElevator(int toFloor) {
-        throw new UnsupportedOperationException("TODO");
-    }
-
-    @Override
-    public void releaseElevator(Elevator elevator) {
-        throw new UnsupportedOperationException("TODO");
+    public Elevator requestInsideElevator(int toFloor, int elevatorId) {
+        return elevators.stream().filter(elevator -> elevator.getId() == elevatorId).findAny().orElse(null);
     }
 
     @Override
@@ -79,10 +74,5 @@ public class ElevatorControllerImpl implements ElevatorController {
                 .filter(elevator -> (!elevator.isBusy() && elevator.getCurrentFloor() == toFloor))
                 .findAny()
                 .orElse(null);
-    }
-
-    @Override
-    public Elevator requestInsideElevator(int toFloor, int elevatorId) {
-        return null;
     }
 }

@@ -160,7 +160,9 @@ public class ElevatorImpl implements Elevator, Runnable {
 
     @Override
     public void addFloorToTargetList(int floor) {
-        targetFloors.add(floor);
+        if (floor > 0 && floor <= numberOfFloors) {
+            targetFloors.add(floor);
+        }
     }
 
     private void logElevatorMove() {
