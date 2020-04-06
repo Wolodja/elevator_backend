@@ -55,7 +55,18 @@ public class ElevatorImpl implements Elevator, Runnable {
     }
 
     @Override
-    public int getAddressedFloor() {
+    public void addFloorToTargetList(int floor) {
+        if (floor > 0 && floor <= numberOfFloors) {
+            targetFloors.add(floor);
+        }
+    }
+
+    @Override
+    public boolean isBusy() {
+        return !targetFloors.isEmpty();
+    }
+
+    private int getAddressedFloor() {
         if (targetFloors.contains(currentFloor)) {
             return currentFloor;
         }
@@ -101,8 +112,7 @@ public class ElevatorImpl implements Elevator, Runnable {
         }
     }
 
-    @Override
-    public void moveElevator() {
+    private void moveElevator() {
         direction = calculateDirection();
 
         logElevatorMove();
@@ -150,18 +160,6 @@ public class ElevatorImpl implements Elevator, Runnable {
             return DirectionEnum.UP;
         } else {
             return targetFloor < currentFloor ? DirectionEnum.DOWN : DirectionEnum.NONE;
-        }
-    }
-
-    @Override
-    public boolean isBusy() {
-        return !targetFloors.isEmpty();
-    }
-
-    @Override
-    public void addFloorToTargetList(int floor) {
-        if (floor > 0 && floor <= numberOfFloors) {
-            targetFloors.add(floor);
         }
     }
 

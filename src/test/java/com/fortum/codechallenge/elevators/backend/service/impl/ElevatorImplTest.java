@@ -26,29 +26,6 @@ class ElevatorImplTest {
     }
 
     @Test
-    public void shouldCalculateDirectionForCurrentFloor(){
-        elevator.addFloorToTargetList(1);
-        elevator.addFloorToTargetList(2);
-        elevator.addFloorToTargetList(3);
-        elevator.addFloorToTargetList(elevator.getCurrentFloor());
-
-        int calculatedFloor = elevator.getAddressedFloor();
-
-        assertEquals(calculatedFloor, elevator.getCurrentFloor());
-    }
-
-    @Test
-    public void shouldCalculateDirectionForNearestFloor() {
-        int currentFloor = elevator.getCurrentFloor();
-        elevator.addFloorToTargetList(currentFloor + 1);
-        elevator.addFloorToTargetList(currentFloor + 2);
-
-        int calculatedFloor = elevator.getAddressedFloor();
-
-        assertEquals(calculatedFloor, currentFloor + 1);
-    }
-
-    @Test
     public void checkIsBusyForEmptyTargetList(){
         elevator.addFloorToTargetList(2);
         assertTrue(elevator.isBusy());
