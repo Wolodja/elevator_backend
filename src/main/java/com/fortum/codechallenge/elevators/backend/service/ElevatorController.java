@@ -10,8 +10,10 @@ public interface ElevatorController {
 
     Elevator requestInsideElevator(int elevatorId);
 
-    boolean validateFloorAndDirection(int toFloor, String direction);
+    boolean validFloor(int toFloor);
 
-    boolean validateFloorAndElevatorId(int toFloor, int elevatorId);
+    boolean validDirection(String direction);
+
+    boolean validElevatorId(int elevatorId);
 
 }

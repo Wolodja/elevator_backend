@@ -1,5 +1,6 @@
 package com.fortum.codechallenge.elevators.backend.controller;
 
+import com.fortum.codechallenge.elevators.backend.event.InElevatorButtonPressEvent;
 import com.fortum.codechallenge.elevators.backend.event.OnFloorButtonPressEvent;
 import com.fortum.codechallenge.elevators.backend.exception.InvalidRequestParametersException;
 import com.fortum.codechallenge.elevators.backend.service.DirectionEnum;
@@ -23,24 +24,36 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("/rest/v1")
 public final class ElevatorControllerEndPoints {
 
+    private static final String INVALID_INPUT = "Invalid input";
     private EventBus eventBus;
     private ElevatorController elevatorController;
 
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.ACCEPTED)
     @PostMapping(value = "/requestElevator/{floor}/{direction}")
     public String requestElevator(@NotNull @PathVariable Integer floor, @NotNull @PathVariable String direction) {
-        if (elevatorController.validateFloorAndDirection(floor, direction)) {
+        if (elevatorController.validFloor(floor) && elevatorController.validDirection(direction)) {
             eventBus.post(new OnFloorButtonPressEvent(floor, DirectionEnum.valueOf(direction)));
             return "Success";
         } else {
-            throw new InvalidRequestParametersException("Invalid input");
+            throw new InvalidRequestParametersException(INVALID_INPUT);
+        }
+    }
+
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @PostMapping(value = "/requestInsideElevator/{elevatorId}/{floor}")
+    public String requestInsideElevator(@NotNull @PathVariable Integer elevatorId,@NotNull @PathVariable Integer floor) {
+        if(elevatorController.validElevatorId(elevatorId) && elevatorController.validFloor(floor)){
+            eventBus.post(new InElevatorButtonPressEvent(floor, elevatorId));
+            return "Success";
+        } else {
+            throw new InvalidRequestParametersException(INVALID_INPUT);
         }
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidRequestParametersException.class)
     public String handleInvalidRequestParameters(Exception exception) {
-        return "Bad Request";
+        return exception.getMessage();
     }
 
 }

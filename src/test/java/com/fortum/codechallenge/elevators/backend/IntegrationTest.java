@@ -1,13 +1,10 @@
 package com.fortum.codechallenge.elevators.backend;
 
 import com.fortum.codechallenge.elevators.backend.controller.ElevatorControllerEndPoints;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Boiler plate test class to get up and running with a test faster.
@@ -17,10 +14,5 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class IntegrationTest {
     @Autowired
     private ElevatorControllerEndPoints endpoints;
-
-    @Test
-    public void simulateAnElevatorShaft() {
-        assertThat(endpoints.ping()).isEqualTo("pong");
-    }
 
 }
