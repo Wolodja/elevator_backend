@@ -9,7 +9,7 @@ import com.google.common.eventbus.Subscribe;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Slf4j
 @Service
@@ -17,9 +17,9 @@ public class EventListener {
 
     private ElevatorController elevatorController;
 
-    private ScheduledExecutorService executor;
+    private ThreadPoolExecutor executor;
 
-    public EventListener(ElevatorController elevatorController, ScheduledExecutorService executor) {
+    public EventListener(ElevatorController elevatorController, ThreadPoolExecutor executor) {
         this.elevatorController = elevatorController;
         this.executor = executor;
     }
@@ -30,8 +30,12 @@ public class EventListener {
         log.info("On  " + floorPressRequest.getToFloor() + " floor elevator is requested in " + floorPressRequest.getRequestedDirection() + " direction.");
         Elevator elevator = elevatorController.requestElevator(floorPressRequest.getToFloor(), floorPressRequest.getRequestedDirection());
         if (elevator != null) {
-            elevator.addFloorToTargetList(floorPressRequest.getToFloor());
-            executor.execute(elevator);
+            if (elevator.isBusy()) {
+                elevator.addFloorToTargetList(floorPressRequest.getToFloor());
+            } else {
+                elevator.addFloorToTargetList(floorPressRequest.getToFloor());
+                executor.execute(elevator);
+            }
         }
     }
 
@@ -41,8 +45,12 @@ public class EventListener {
         log.info("Inside Elevator " + elevatorPressEvent.getElevatorId() + " pressed button to move to " + elevatorPressEvent.getToFloor() + " floor.");
         Elevator elevator = elevatorController.requestInsideElevator(elevatorPressEvent.getElevatorId());
         if (elevator != null) {
-            elevator.addFloorToTargetList(elevatorPressEvent.getToFloor());
-            executor.execute(elevator);
+            if (elevator.isBusy()) {
+                elevator.addFloorToTargetList(elevatorPressEvent.getToFloor());
+            } else {
+                elevator.addFloorToTargetList(elevatorPressEvent.getToFloor());
+                executor.execute(elevator);
+            }
         }
     }
 }

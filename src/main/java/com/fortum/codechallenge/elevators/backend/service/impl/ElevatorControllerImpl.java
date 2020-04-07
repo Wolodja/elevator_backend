@@ -4,10 +4,12 @@ import com.fortum.codechallenge.elevators.backend.service.DirectionEnum;
 import com.fortum.codechallenge.elevators.backend.service.Elevator;
 import com.fortum.codechallenge.elevators.backend.service.ElevatorController;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,6 +18,7 @@ import java.util.stream.IntStream;
 
 @Slf4j
 @Getter
+@NoArgsConstructor
 @Service
 public class ElevatorControllerImpl implements ElevatorController {
 
@@ -25,10 +28,17 @@ public class ElevatorControllerImpl implements ElevatorController {
     @Value("${com.fortum.codechallenge.numberOfFloors}")
     private int numberOfFloors;
 
+    @Value("${com.fortum.codechallenge.onFloorTravelTime}")
+    private int oneFloorTravelTime;
+
+    @Value("${com.fortum.codechallenge.passengersGettingOfElevatorTime}")
+    private int passengersGettingOffTime;
+
     private final List<Elevator> elevators = Collections.synchronizedList(new ArrayList<>());
 
-    public ElevatorControllerImpl() {
-        IntStream.rangeClosed(1, numberOfElevators).forEach(elevatorId -> elevators.add(new ElevatorImpl(elevatorId)));
+    @PostConstruct
+    public void init() {
+        IntStream.rangeClosed(1, numberOfElevators).forEach(elevatorId -> elevators.add(new ElevatorImpl(elevatorId, numberOfFloors, oneFloorTravelTime, passengersGettingOffTime)));
     }
 
     @Override
@@ -78,7 +88,7 @@ public class ElevatorControllerImpl implements ElevatorController {
 
     @Override
     public boolean validFloor(int toFloor) {
-        return toFloor > 0 && toFloor < numberOfFloors;
+        return toFloor >= 0 && toFloor <= numberOfFloors;
     }
 
     @Override

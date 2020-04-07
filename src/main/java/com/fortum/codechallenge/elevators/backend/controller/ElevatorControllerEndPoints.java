@@ -24,7 +24,6 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("/rest/v1")
 public final class ElevatorControllerEndPoints {
 
-    private static final String INVALID_INPUT = "Invalid input";
     private EventBus eventBus;
     private ElevatorController elevatorController;
 
@@ -35,24 +34,25 @@ public final class ElevatorControllerEndPoints {
             eventBus.post(new OnFloorButtonPressEvent(floor, DirectionEnum.valueOf(direction.toUpperCase())));
             return "Success";
         } else {
-            throw new InvalidRequestParametersException(INVALID_INPUT);
+            throw new InvalidRequestParametersException("Invalid input - Floor : " + floor + ", direction: " + direction);
         }
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
     @GetMapping(value = "/requestInsideElevator/{elevatorId}/{floor}")
-    public String requestInsideElevator(@NotNull @PathVariable Integer elevatorId,@NotNull @PathVariable Integer floor) {
-        if(elevatorController.validElevatorId(elevatorId) && elevatorController.validFloor(floor)){
+    public String requestInsideElevator(@NotNull @PathVariable Integer elevatorId, @NotNull @PathVariable Integer floor) {
+        if (elevatorController.validElevatorId(elevatorId) && elevatorController.validFloor(floor)) {
             eventBus.post(new InElevatorButtonPressEvent(floor, elevatorId));
             return "Success";
         } else {
-            throw new InvalidRequestParametersException(INVALID_INPUT);
+            throw new InvalidRequestParametersException("Invalid input - Floor : " + floor + ", elevatorId: " + elevatorId);
         }
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidRequestParametersException.class)
     public String handleInvalidRequestParameters(Exception exception) {
+        log.error(exception.getMessage());
         return exception.getMessage();
     }
 

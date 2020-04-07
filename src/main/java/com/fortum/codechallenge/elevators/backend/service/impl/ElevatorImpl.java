@@ -4,8 +4,8 @@ import com.fortum.codechallenge.elevators.backend.service.DirectionEnum;
 import com.fortum.codechallenge.elevators.backend.service.Elevator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,19 +15,17 @@ import java.util.List;
 
 @Slf4j
 @Getter
+@ToString
 @Service
 @NoArgsConstructor
 public class ElevatorImpl implements Elevator, Runnable {
 
     private int id;
 
-    @Value("${com.fortum.codechallenge.numberOfFloors}")
     private int numberOfFloors;
 
-    @Value("${com.fortum.codechallenge.onFloorTravelTime}")
     private int oneFloorTravelTime;
 
-    @Value("${com.fortum.codechallenge.passengersGettingOfElevatorTime}")
     private int passengersGettingOffTime;
 
     private int currentFloor;
@@ -38,8 +36,11 @@ public class ElevatorImpl implements Elevator, Runnable {
 
     private List<Integer> targetFloors = Collections.synchronizedList(new ArrayList<>());
 
-    public ElevatorImpl(int id) {
+    public ElevatorImpl(int id, int numberOfFloors, int oneFloorTravelTime, int passengersGettingOffTime) {
         this.id = id;
+        this.numberOfFloors = numberOfFloors;
+        this.oneFloorTravelTime = oneFloorTravelTime;
+        this.passengersGettingOffTime = passengersGettingOffTime;
         this.currentFloor = 0;
         this.targetFloor = 0;
         direction = DirectionEnum.NONE;
