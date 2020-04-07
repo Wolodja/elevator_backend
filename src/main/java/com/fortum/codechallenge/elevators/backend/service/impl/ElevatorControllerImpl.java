@@ -84,7 +84,7 @@ public class ElevatorControllerImpl implements ElevatorController {
     @Override
     public boolean validDirection(String direction) {
         for (DirectionEnum directionEnum : DirectionEnum.values()) {
-            if (directionEnum.name().equals(direction)) {
+            if (directionEnum.name().equalsIgnoreCase(direction)) {
                 return true;
             }
         }

@@ -1,0 +1,4 @@
+### Invalid Floor number
+http://localhost:8081/rest/v1/requestElevator/25/up
+### Invalid direction
+http://localhost:8081/rest/v1/requestElevator/5/left

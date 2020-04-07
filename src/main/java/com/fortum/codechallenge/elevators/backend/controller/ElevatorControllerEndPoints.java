@@ -10,8 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,10 +29,10 @@ public final class ElevatorControllerEndPoints {
     private ElevatorController elevatorController;
 
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @PostMapping(value = "/requestElevator/{floor}/{direction}")
+    @GetMapping(value = "/requestElevator/{floor}/{direction}")
     public String requestElevator(@NotNull @PathVariable Integer floor, @NotNull @PathVariable String direction) {
         if (elevatorController.validFloor(floor) && elevatorController.validDirection(direction)) {
-            eventBus.post(new OnFloorButtonPressEvent(floor, DirectionEnum.valueOf(direction)));
+            eventBus.post(new OnFloorButtonPressEvent(floor, DirectionEnum.valueOf(direction.toUpperCase())));
             return "Success";
         } else {
             throw new InvalidRequestParametersException(INVALID_INPUT);
@@ -40,7 +40,7 @@ public final class ElevatorControllerEndPoints {
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @PostMapping(value = "/requestInsideElevator/{elevatorId}/{floor}")
+    @GetMapping(value = "/requestInsideElevator/{elevatorId}/{floor}")
     public String requestInsideElevator(@NotNull @PathVariable Integer elevatorId,@NotNull @PathVariable Integer floor) {
         if(elevatorController.validElevatorId(elevatorId) && elevatorController.validFloor(floor)){
             eventBus.post(new InElevatorButtonPressEvent(floor, elevatorId));

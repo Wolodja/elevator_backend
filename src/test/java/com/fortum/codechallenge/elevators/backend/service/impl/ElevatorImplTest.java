@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ElevatorImplTest {
 
@@ -19,15 +18,9 @@ class ElevatorImplTest {
     }
 
     @Test
-    public void checkInitialValues(){
+    public void checkInitialValues() {
         assertEquals(DirectionEnum.NONE, elevator.getDirection());
         assertFalse(elevator.isBusy());
         assertEquals(0, elevator.getCurrentFloor());
-    }
-
-    @Test
-    public void checkIsBusyForEmptyTargetList(){
-        elevator.addFloorToTargetList(2);
-        assertTrue(elevator.isBusy());
     }
 }

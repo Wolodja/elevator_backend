@@ -27,7 +27,7 @@ public class EventListener {
     @Subscribe
     @AllowConcurrentEvents
     public void floorButtonPressed(OnFloorButtonPressEvent floorPressRequest) {
-        log.info("On  " + floorPressRequest.getToFloor() + " floor elevator is rrequested in " + floorPressRequest.getRequestedDirection() + " direction.");
+        log.info("On  " + floorPressRequest.getToFloor() + " floor elevator is requested in " + floorPressRequest.getRequestedDirection() + " direction.");
         Elevator elevator = elevatorController.requestElevator(floorPressRequest.getToFloor(), floorPressRequest.getRequestedDirection());
         if (elevator != null) {
             elevator.addFloorToTargetList(floorPressRequest.getToFloor());
