@@ -1,27 +1,46 @@
 package com.fortum.codechallenge.elevators.backend.controller;
 
+import com.fortum.codechallenge.elevators.backend.event.OnFloorButtonPressEvent;
+import com.fortum.codechallenge.elevators.backend.exception.InvalidRequestParametersException;
+import com.fortum.codechallenge.elevators.backend.service.DirectionEnum;
 import com.fortum.codechallenge.elevators.backend.service.ElevatorController;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.common.eventbus.EventBus;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Rest Resource.
- */
+import javax.validation.constraints.NotNull;
+
+@Slf4j
 @RestController
+@AllArgsConstructor
 @RequestMapping("/rest/v1")
 public final class ElevatorControllerEndPoints {
-    @Autowired
+
+    private EventBus eventBus;
     private ElevatorController elevatorController;
 
-    /**
-     * Ping service to test if we are alive.
-     *
-     * @return String pong
-     */
-    @RequestMapping(value = "/ping", method = RequestMethod.GET)
-    public String ping() {
-        return "pong";
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping(value = "/requestElevator/{floor}/{direction}")
+    public String requestElevator(@NotNull @PathVariable Integer floor, @NotNull @PathVariable String direction) {
+        if (elevatorController.validateFloorAndDirection(floor, direction)) {
+            eventBus.post(new OnFloorButtonPressEvent(floor, DirectionEnum.valueOf(direction)));
+            return "Success";
+        } else {
+            throw new InvalidRequestParametersException("Invalid input");
+        }
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidRequestParametersException.class)
+    public String handleInvalidRequestParameters(Exception exception) {
+        return "Bad Request";
+    }
+
 }

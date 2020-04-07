@@ -27,7 +27,7 @@ public class EventListener {
     @Subscribe
     @AllowConcurrentEvents
     public void floorButtonPressed(OnFloorButtonPressEvent floorPressRequest) {
-        log.info("Request from floor " + floorPressRequest.getToFloor() + " in the direction " + floorPressRequest.getRequestedDirection());
+        log.info("On  " + floorPressRequest.getToFloor() + " floor elevator is rrequested in " + floorPressRequest.getRequestedDirection() + " direction.");
         Elevator elevator = elevatorController.requestElevator(floorPressRequest.getToFloor(), floorPressRequest.getRequestedDirection());
         if (elevator != null) {
             elevator.addFloorToTargetList(floorPressRequest.getToFloor());
@@ -38,8 +38,8 @@ public class EventListener {
     @Subscribe
     @AllowConcurrentEvents
     public void requestInsideElevator(InElevatorButtonPressEvent elevatorPressEvent) {
-        log.info("Elevator Event- Inside Elevator " + elevatorPressEvent.getElevatorId() + " moving to floor " + elevatorPressEvent.getToFloor());
-        Elevator elevator = elevatorController.requestInsideElevator(elevatorPressEvent.getToFloor(), elevatorPressEvent.getElevatorId());
+        log.info("Inside Elevator " + elevatorPressEvent.getElevatorId() + " pressed button to move to " + elevatorPressEvent.getToFloor() + " floor.");
+        Elevator elevator = elevatorController.requestInsideElevator(elevatorPressEvent.getElevatorId());
         if (elevator != null) {
             elevator.addFloorToTargetList(elevatorPressEvent.getToFloor());
             executor.execute(elevator);

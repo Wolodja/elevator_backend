@@ -32,7 +32,7 @@ public class ElevatorControllerImpl implements ElevatorController {
     }
 
     @Override
-    public Elevator requestInsideElevator(int toFloor, int elevatorId) {
+    public Elevator requestInsideElevator(int elevatorId) {
         return elevators.stream().filter(elevator -> elevator.getId() == elevatorId).findAny().orElse(null);
     }
 
@@ -74,5 +74,33 @@ public class ElevatorControllerImpl implements ElevatorController {
                 .filter(elevator -> (!elevator.isBusy() && elevator.getCurrentFloor() == toFloor))
                 .findAny()
                 .orElse(null);
+    }
+
+
+    @Override
+    public boolean validateFloorAndDirection(int toFloor, String direction) {
+        return validFloor(toFloor) && validDirection(direction);
+    }
+
+    @Override
+    public boolean validateFloorAndElevatorId(int toFloor, int elevatorId) {
+        return validFloor(toFloor) && validElevatorId(elevatorId);
+    }
+
+    private boolean validFloor(int toFloor) {
+        return toFloor > 0 && toFloor < numberOfFloors;
+    }
+
+    private boolean validDirection(String direction) {
+        for (DirectionEnum directionEnum : DirectionEnum.values()) {
+            if (directionEnum.name().equals(direction)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean validElevatorId(int elevatorId) {
+        return elevators.stream().anyMatch(elevator -> elevator.getId() == elevatorId);
     }
 }
