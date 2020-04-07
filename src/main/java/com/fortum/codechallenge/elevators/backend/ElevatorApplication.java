@@ -26,7 +26,6 @@ public class ElevatorApplication {
 
     public static void main(final String[] args) {
         SpringApplication.run(ElevatorApplication.class, args);
-        log.info("-----------------------------------------------------------");
     }
 
     @Bean(destroyMethod = "shutdown")
