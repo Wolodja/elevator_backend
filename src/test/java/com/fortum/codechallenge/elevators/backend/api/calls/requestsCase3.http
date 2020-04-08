@@ -1,0 +1,12 @@
+###Please run one by one
+
+###Request on 7 floor up -> must serve 1 elevator
+http://localhost:8081/rest/v1/requestElevator/7/up
+###Request on 9 floor up -> must serve 2 elevator
+http://localhost:8081/rest/v1/requestElevator/9/down
+###Inside first elevator to go to 4 floor
+http://localhost:8081/rest/v1/requestInsideElevator/1/4
+###Request on 3 floor up -> must serve 1 elevator
+http://localhost:8081/rest/v1/requestElevator/3/up
+
+###

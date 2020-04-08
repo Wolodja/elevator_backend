@@ -1,7 +1,6 @@
-package com.fortum.codechallenge.elevators.backend.service.impl;
+package com.fortum.codechallenge.elevators.backend.domain.impl;
 
-import com.fortum.codechallenge.elevators.backend.service.DirectionEnum;
-import com.fortum.codechallenge.elevators.backend.service.Elevator;
+import com.fortum.codechallenge.elevators.backend.domain.Elevator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -20,13 +19,14 @@ import java.util.List;
 @NoArgsConstructor
 public class ElevatorImpl implements Elevator, Runnable {
 
+    private static final String TARGET_FLOOR_LIST_IS_EMPTY = "Target Floor List is empty!";
     private int id;
 
     private int numberOfFloors;
 
     private int oneFloorTravelTime;
 
-    private int passengersGettingOffTime;
+    private int passengersTime;
 
     private int currentFloor;
 
@@ -34,13 +34,15 @@ public class ElevatorImpl implements Elevator, Runnable {
 
     private DirectionEnum direction;
 
-    private List<Integer> targetFloors = Collections.synchronizedList(new ArrayList<>());
+    private DirectionEnum nextDirection;
 
-    public ElevatorImpl(int id, int numberOfFloors, int oneFloorTravelTime, int passengersGettingOffTime) {
+    private List<TargetFloor> targetFloors = Collections.synchronizedList(new ArrayList<>());
+
+    public ElevatorImpl(int id, int numberOfFloors, int oneFloorTravelTime, int passengersTime) {
         this.id = id;
         this.numberOfFloors = numberOfFloors;
         this.oneFloorTravelTime = oneFloorTravelTime;
-        this.passengersGettingOffTime = passengersGettingOffTime;
+        this.passengersTime = passengersTime;
         this.currentFloor = 0;
         this.targetFloor = 0;
         direction = DirectionEnum.NONE;
@@ -56,9 +58,9 @@ public class ElevatorImpl implements Elevator, Runnable {
     }
 
     @Override
-    public void addFloorToTargetList(int floor) {
-        if (floor > 0 && floor <= numberOfFloors) {
-            targetFloors.add(floor);
+    public void addFloorToTargetList(int floor, DirectionEnum direction) {
+        if (floor >= 0 && floor <= numberOfFloors) {
+            targetFloors.add(new TargetFloor(floor, direction));
         }
     }
 
@@ -68,47 +70,45 @@ public class ElevatorImpl implements Elevator, Runnable {
     }
 
     private int getAddressedFloor() {
-        if (targetFloors.contains(currentFloor)) {
+        if (targetFloors.stream().anyMatch(floor -> floor.getToFloor() == currentFloor)) {
             return currentFloor;
         }
-        return calculateAddressFloor();
+        TargetFloor targetFloor = calculateAddressFloor();
+        nextDirection = targetFloor.getNextDirection();
+        return targetFloor.getToFloor();
     }
 
-    private int calculateAddressFloor() {
-        int addressedFloor;
+    private TargetFloor calculateAddressFloor() {
+        TargetFloor addressedFloor;
         switch (direction) {
             case UP:
                 addressedFloor = targetFloors.stream()
-                        .filter(floor -> floor > currentFloor)
-                        .mapToInt(Number::intValue)
-                        .min()
-                        .orElse(-1);
-                if (addressedFloor == -1) {
+                        .filter(floor -> floor.getToFloor() > currentFloor)
+                        .min(Comparator.comparingInt(TargetFloor::getToFloor))
+                        .orElse(null);
+                if (addressedFloor == null) {
                     addressedFloor = targetFloors.stream()
-                            .filter(floor -> floor < currentFloor)
-                            .mapToInt(Number::intValue)
-                            .max()
-                            .orElse(-1);
+                            .filter(floor -> floor.getToFloor() < currentFloor)
+                            .max(Comparator.comparingInt(TargetFloor::getToFloor))
+                            .orElse(new TargetFloor(currentFloor, null));
                 }
                 return addressedFloor;
             case DOWN:
                 addressedFloor = targetFloors.stream()
-                        .filter(floor -> floor < currentFloor)
-                        .mapToInt(Number::intValue)
-                        .max()
-                        .orElse(-1);
-                if (addressedFloor == -1) {
+                        .filter(floor -> floor.getToFloor() < currentFloor)
+                        .max(Comparator.comparingInt(TargetFloor::getToFloor))
+                        .orElse(null);
+                if (addressedFloor == null) {
                     addressedFloor = targetFloors.stream()
-                            .filter(floor -> floor > currentFloor)
-                            .mapToInt(Number::intValue)
-                            .min()
-                            .orElse(-1);
+                            .filter(floor -> floor.getToFloor() > currentFloor)
+                            .min(Comparator.comparingInt(TargetFloor::getToFloor))
+                            .orElse(new TargetFloor(currentFloor, null));
                 }
                 return addressedFloor;
             default:
                 addressedFloor = targetFloors.stream()
-                        .min(Comparator.comparingInt(i -> Math.abs(i - currentFloor)))
-                        .orElseThrow(() -> new RuntimeException("Target Floor List is empty!"));
+                        .min(Comparator.comparingInt(floor -> Math.abs(floor.getToFloor() - currentFloor)))
+                        .orElse(new TargetFloor(currentFloor, null));
                 return addressedFloor;
         }
     }
@@ -123,7 +123,7 @@ public class ElevatorImpl implements Elevator, Runnable {
             addOneFloorTravelTime();
         }
         logElevatorFinishMove();
-        targetFloors.removeIf(floor -> (currentFloor == floor));
+        targetFloors.removeIf(floor -> (currentFloor == floor.getToFloor()));
     }
 
 
@@ -137,7 +137,7 @@ public class ElevatorImpl implements Elevator, Runnable {
 
     private void waitForPassengersToGetInOrGetOff() {
         try {
-            Thread.sleep(passengersGettingOffTime);
+            Thread.sleep(passengersTime);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

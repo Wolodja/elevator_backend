@@ -1,0 +1,9 @@
+### In Elevator 1 pressed button to 5 flor -> must serve 1 elevator
+http://localhost:8081/rest/v1/requestInsideElevator/1/5
+###Request to 7 floor up -> must serve 1 elevator
+http://localhost:8081/rest/v1/requestElevator/7/up
+###Request to 9 floor down -> must serve 2 elevator
+http://localhost:8081/rest/v1/requestElevator/9/down
+###Request to 8 floor up -> must serve 1 elevator
+http://localhost:8081/rest/v1/requestElevator/8/up
+###

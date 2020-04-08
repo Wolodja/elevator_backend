@@ -1,10 +1,8 @@
-package com.fortum.codechallenge.elevators.backend.service;
+package com.fortum.codechallenge.elevators.backend.domain;
 
-import java.util.List;
+import com.fortum.codechallenge.elevators.backend.domain.impl.DirectionEnum;
 
 public interface ElevatorController {
-
-    List<Elevator> getElevators();
 
     Elevator requestElevator(int toFloor, DirectionEnum requestedDirection);
 

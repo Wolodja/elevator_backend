@@ -1,10 +1,10 @@
 package com.fortum.codechallenge.elevators.backend.controller;
 
+import com.fortum.codechallenge.elevators.backend.domain.ElevatorController;
+import com.fortum.codechallenge.elevators.backend.domain.impl.DirectionEnum;
 import com.fortum.codechallenge.elevators.backend.event.InElevatorButtonPressEvent;
 import com.fortum.codechallenge.elevators.backend.event.OnFloorButtonPressEvent;
 import com.fortum.codechallenge.elevators.backend.exception.InvalidRequestParametersException;
-import com.fortum.codechallenge.elevators.backend.service.DirectionEnum;
-import com.fortum.codechallenge.elevators.backend.service.ElevatorController;
 import com.google.common.eventbus.EventBus;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

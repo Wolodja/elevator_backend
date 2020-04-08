@@ -1,9 +1,9 @@
 package com.fortum.codechallenge.elevators.backend.listner;
 
+import com.fortum.codechallenge.elevators.backend.domain.Elevator;
+import com.fortum.codechallenge.elevators.backend.domain.ElevatorController;
 import com.fortum.codechallenge.elevators.backend.event.InElevatorButtonPressEvent;
 import com.fortum.codechallenge.elevators.backend.event.OnFloorButtonPressEvent;
-import com.fortum.codechallenge.elevators.backend.service.Elevator;
-import com.fortum.codechallenge.elevators.backend.service.ElevatorController;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
 import lombok.extern.slf4j.Slf4j;
@@ -26,14 +26,14 @@ public class EventListener {
 
     @Subscribe
     @AllowConcurrentEvents
-    public void floorButtonPressed(OnFloorButtonPressEvent floorPressRequest) {
+    public void requestOnFloor(OnFloorButtonPressEvent floorPressRequest) {
         log.info("On  " + floorPressRequest.getToFloor() + " floor elevator is requested in " + floorPressRequest.getRequestedDirection() + " direction.");
         Elevator elevator = elevatorController.requestElevator(floorPressRequest.getToFloor(), floorPressRequest.getRequestedDirection());
         if (elevator != null) {
             if (elevator.isBusy()) {
-                elevator.addFloorToTargetList(floorPressRequest.getToFloor());
+                elevator.addFloorToTargetList(floorPressRequest.getToFloor(), floorPressRequest.getRequestedDirection());
             } else {
-                elevator.addFloorToTargetList(floorPressRequest.getToFloor());
+                elevator.addFloorToTargetList(floorPressRequest.getToFloor(), floorPressRequest.getRequestedDirection());
                 executor.execute(elevator);
             }
         }
@@ -46,9 +46,9 @@ public class EventListener {
         Elevator elevator = elevatorController.requestInsideElevator(elevatorPressEvent.getElevatorId());
         if (elevator != null) {
             if (elevator.isBusy()) {
-                elevator.addFloorToTargetList(elevatorPressEvent.getToFloor());
+                elevator.addFloorToTargetList(elevatorPressEvent.getToFloor(), null);
             } else {
-                elevator.addFloorToTargetList(elevatorPressEvent.getToFloor());
+                elevator.addFloorToTargetList(elevatorPressEvent.getToFloor(), null);
                 executor.execute(elevator);
             }
         }

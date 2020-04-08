@@ -1,0 +1,6 @@
+###Request on 7 floor up -> must serve 1 elevator
+http://localhost:8081/rest/v1/requestElevator/7/up
+###Request on 5 floor down -> must serve 2 elevator
+http://localhost:8081/rest/v1/requestElevator/5/down
+###Request on 6 floor down -> must serve 3 elevator
+http://localhost:8081/rest/v1/requestElevator/6/down

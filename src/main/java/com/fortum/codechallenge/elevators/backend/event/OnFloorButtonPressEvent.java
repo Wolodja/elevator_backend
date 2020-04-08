@@ -1,6 +1,6 @@
 package com.fortum.codechallenge.elevators.backend.event;
 
-import com.fortum.codechallenge.elevators.backend.service.DirectionEnum;
+import com.fortum.codechallenge.elevators.backend.domain.impl.DirectionEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

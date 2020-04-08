@@ -1,8 +1,7 @@
-package com.fortum.codechallenge.elevators.backend.service.impl;
+package com.fortum.codechallenge.elevators.backend.domain.impl;
 
-import com.fortum.codechallenge.elevators.backend.service.DirectionEnum;
-import com.fortum.codechallenge.elevators.backend.service.Elevator;
-import com.fortum.codechallenge.elevators.backend.service.ElevatorController;
+import com.fortum.codechallenge.elevators.backend.domain.Elevator;
+import com.fortum.codechallenge.elevators.backend.domain.ElevatorController;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -32,13 +32,13 @@ public class ElevatorControllerImpl implements ElevatorController {
     private int oneFloorTravelTime;
 
     @Value("${com.fortum.codechallenge.passengersGettingOfElevatorTime}")
-    private int passengersGettingOffTime;
+    private int passengersTime;
 
     private final List<Elevator> elevators = Collections.synchronizedList(new ArrayList<>());
 
     @PostConstruct
     public void init() {
-        IntStream.rangeClosed(1, numberOfElevators).forEach(elevatorId -> elevators.add(new ElevatorImpl(elevatorId, numberOfFloors, oneFloorTravelTime, passengersGettingOffTime)));
+        IntStream.rangeClosed(1, numberOfElevators).forEach(elevatorId -> elevators.add(new ElevatorImpl(elevatorId, numberOfFloors, oneFloorTravelTime, passengersTime)));
     }
 
     @Override
@@ -52,7 +52,11 @@ public class ElevatorControllerImpl implements ElevatorController {
         if (elevator == null) {
             elevator = findElevatorBasedOnDirection(toFloor, requestedDirection);
             if (elevator == null) {
-                elevator = elevators.stream().findFirst().orElse(null);
+                elevator = elevators.stream()
+                        .filter(el -> !el.isBusy()).findAny()
+                        .orElse(elevators.stream()
+                                .min(Comparator.comparingInt(e -> Math.abs(e.getCurrentFloor() - toFloor)))
+                                .orElse(null));
             }
         }
         return elevator;
@@ -62,25 +66,34 @@ public class ElevatorControllerImpl implements ElevatorController {
         switch (reqDirection) {
             case UP:
                 return elevators.stream()
-                        .filter(elevator -> elevator.getCurrentFloor() < toFloor && elevator.getDirection().equals(DirectionEnum.UP))
+                        .filter(elevator -> directionUpCondition(toFloor, elevator))
                         .max(Comparator.comparing(Elevator::getCurrentFloor))
                         .orElse(null);
             case DOWN:
                 return elevators.stream()
-                        .filter(elevator -> elevator.getCurrentFloor() > toFloor && elevator.getDirection().equals(DirectionEnum.DOWN))
+                        .filter(elevator -> directionDownCondition(toFloor, elevator))
                         .min(Comparator.comparing(Elevator::getCurrentFloor))
                         .orElse(null);
-            case NONE:
             default:
-                return elevators.stream()
-                        .min(Comparator.comparingInt(elevator -> Math.abs(elevator.getCurrentFloor() - toFloor)))
-                        .orElse(null);
+                return null;
         }
 
     }
 
+    private boolean directionDownCondition(int toFloor, Elevator elevator) {
+        return elevator.getCurrentFloor() > toFloor &&
+                elevator.getDirection().equals(DirectionEnum.DOWN) &&
+                !DirectionEnum.UP.equals(elevator.getNextDirection());
+    }
+
+    private boolean directionUpCondition(int toFloor, Elevator elevator) {
+        return elevator.getCurrentFloor() < toFloor &&
+                elevator.getDirection().equals(DirectionEnum.UP) &&
+                !DirectionEnum.DOWN.equals(elevator.getNextDirection());
+    }
+
     private Elevator findElevatorOnCurrentFloor(int toFloor) {
-        return getElevators().stream()
+        return elevators.stream()
                 .filter(elevator -> (!elevator.isBusy() && elevator.getCurrentFloor() == toFloor))
                 .findAny()
                 .orElse(null);
@@ -93,12 +106,8 @@ public class ElevatorControllerImpl implements ElevatorController {
 
     @Override
     public boolean validDirection(String direction) {
-        for (DirectionEnum directionEnum : DirectionEnum.values()) {
-            if (directionEnum.name().equalsIgnoreCase(direction)) {
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(DirectionEnum.values()).anyMatch(directionEnum -> directionEnum.name().equalsIgnoreCase(direction))
+                && !direction.equalsIgnoreCase(DirectionEnum.NONE.name());
     }
 
     @Override
