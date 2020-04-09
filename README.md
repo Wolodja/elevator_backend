@@ -7,7 +7,7 @@ There are two types of event that the program can handle:
 2. Request inside elevator
 
 
-#### How to Run:
+### How to Run:
 
 As the project is, the Spring app can be started as seen below.
 
@@ -21,8 +21,13 @@ or start the target JAR file
     mvn package
     java -jar target/elevators-backend-0.0.1-SNAPSHOT.jar
 
+### Graphical User Interface
 
-#### How to Test
+There is dedicated Angular 9.1 frontend program to send REST requests to application.
+ 
+https://github.com/Wolodja/elevators_frontend
+
+### How to Test
 
 Application can be tested in different ways:
 1. Run single get request:
@@ -45,4 +50,4 @@ Application can be tested in different ways:
    - requestCase3.http    
    - requestCase4.http    
    
-###### The result can be checked in console or in generated log file (log/spring.log)
+##### The result can be checked in console or in generated log file (log/spring.log)
